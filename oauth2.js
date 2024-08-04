@@ -30,12 +30,12 @@ function createAccessToken(data) {
 
 
 // Verify an access token
-function verifyAccessToken(token, id, credentialsException = null) {
+function verifyAccessToken(token, credentialsException = null) {
 
     try {
         const payload = jwt.verify(token, SECRET_KEY, { algorithms: [ALGORITHM] });
         const userId = payload.user_id;
-        if (!userId || userId !== id) {
+        if (!userId) {
             if (credentialsException) {
                 throw credentialsException;
             } else {
@@ -43,7 +43,7 @@ function verifyAccessToken(token, id, credentialsException = null) {
             }
         }
 
-        return true;
+        return true , userId;
     } catch (err) {
         console.error('Error in token verification:', err); // Log any errors
         if (credentialsException) {

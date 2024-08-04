@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-const port = 3002;
+const port = 3001;
 
 app.use(express.json());
 
@@ -32,8 +32,8 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-// app.use('', require('./routes/user'));
-// app.use('', require('./routes/auth'));
+app.use('/api', require('./routes/user'));
+app.use('/api', require('./routes/auth'));
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
