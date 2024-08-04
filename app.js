@@ -32,8 +32,8 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.use('', require('./routes/user'));
-app.use('', require('./routes/auth'));
+// app.use('', require('./routes/user'));
+// app.use('', require('./routes/auth'));
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
