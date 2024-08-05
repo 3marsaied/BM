@@ -34,6 +34,7 @@ app.get('/', (req, res) => {
 
 app.use('/api', require('./routes/user'));
 app.use('/api', require('./routes/auth'));
+app.use('/api', require('./routes/favourite'));
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

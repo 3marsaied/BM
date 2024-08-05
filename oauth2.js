@@ -35,6 +35,7 @@ function verifyAccessToken(token, credentialsException = null) {
     try {
         const payload = jwt.verify(token, SECRET_KEY, { algorithms: [ALGORITHM] });
         const userId = payload.user_id;
+        console.log(userId);
         if (!userId) {
             if (credentialsException) {
                 throw credentialsException;
@@ -43,7 +44,7 @@ function verifyAccessToken(token, credentialsException = null) {
             }
         }
 
-        return true , userId;
+        return userId;
     } catch (err) {
         console.error('Error in token verification:', err); // Log any errors
         if (credentialsException) {
@@ -60,6 +61,7 @@ const authenticateToken = (req, res, next) => {
     if (!authHeader) return res.status(401).json({ detail: "Authorization header missing" });
 
     const token = authHeader.split(" ")[1];
+    if (!token) return res.status(401).json({ detail: "Token not provided" });
 
     // Attach the token to the request for later use
     req.token = token;
