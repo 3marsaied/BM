@@ -70,7 +70,7 @@ router.delete('/favourites', authenticateToken, async function (req, res) {
         if (!userId) {
             return res.status(401).json({ detail: "Unauthorized" });
         }
-        const fav = await Favourite.findOne(accNum);
+        const fav = await Favourite.findOne({accNum: accNum});
         if (!fav) {
             return res.status(404).json({ detail: "Favourite not found" });
         }
