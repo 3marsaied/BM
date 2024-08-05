@@ -120,49 +120,58 @@ router.get('/profileInfo', authenticateToken, async (req, res) => {
 });
 
 router.post('/transferMoney', authenticateToken, async (req, res) => {
-    const {amountToSend, amountToRecieve, currencyToSend, currencyToRecieve, fromName, toName, fromAccNum, toAccNum, fees } = req.body;
+    const { amountToSend, amountToRecieve, currencyToSend, currencyToRecieve, fromName, toName, fromAccNum, toAccNum, fees } = req.body;
 
-    try{
-        // Ensure auth is properly obtained and verified
+    try {
         const userId = verifyAccessToken(req.token);
         if (!userId) {
             return res.status(401).json({ detail: "Unauthorized" });
         }
+
         const user = await User.findById(userId);
-        if(!user.accountNumber === fromAccNum){
+        if (user.accountNumber !== fromAccNum) {
             return res.status(403).json({ detail: "You are not authorized to transfer from this account" });
         }
-        const convertedAmountToTransfer = await convertCurrency(currencyToSend, "USD", (amountToSend + fees))
-        if (convertedAmountToTransfer >= user.balance){
-            return res.status(400).json({ detail: "your balance is less than that amount"});
-        }else{
-            newSenderBalance = user.balance - convertedAmountToTransfer;
-            const convertedAmountToRecieve = await convertCurrency(currencyToSend, "USD", amountToSend);
-            const recvedAccount = await User.find({accountNumber: toAccNum});
-            newReciverBalance = recvedAccount.balance + convertedAmountToRecieve;
-            await User.updateOne(
-                { accountNumber: toAccNum },
-                { $set: { balance: newReciverBalance } }
-            );
-            await User.updateOne(
-                { _id: userId },
-                { $set: { balance: newSenderBalance } }
-            );
-            const newPayment = new Payment({
-                recipientName: toName,
-                recipientAccNum: toAccNum,
-                totalSent: newRecivedBalance,
-                userId: userId
-            });
-            await newPayment.save();
-            res.status(200).send({ message:"Money sent successfully" });
+
+        const convertedAmountToTransfer = await convertCurrency(currencyToSend, "USD", parseFloat(amountToSend) + parseFloat(fees));
+        if (convertedAmountToTransfer >= user.balance) {
+            return res.status(400).json({ detail: "Your balance is less than that amount" });
         }
+
+        const newSenderBalance = user.balance - convertedAmountToTransfer;
+        const convertedAmountToRecieve = await convertCurrency(currencyToSend, "USD", parseFloat(amountToSend));
+
+        const recvedAccount = await User.findOne({ accountNumber: toAccNum });
+        if (!recvedAccount) {
+            return res.status(404).json({ detail: "Recipient account not found" });
+        }
+
+        const newReciverBalance = recvedAccount.balance + convertedAmountToRecieve;
+
+        await User.updateOne(
+            { accountNumber: toAccNum },
+            { $set: { balance: newReciverBalance } }
+        );
+
+        await User.updateOne(
+            { _id: userId },
+            { $set: { balance: newSenderBalance } }
+        );
+
+        const newPayment = new Payment({
+            recipientName: toName,
+            recipientAccNum: toAccNum,
+            totalSent: convertedAmountToRecieve,
+            userId: userId
+        });
+        await newPayment.save();
+
+        res.status(200).send({ message: "Money sent successfully" });
     } catch (error) {
         console.error('Internal Server Error:', error);
         res.status(500).json({ detail: "Internal Server Error" });
     }
 });
-
 router.put('/updateProfileInfo', authenticateToken, async (req, res) => {
     const {firstName, lastName, phone, email} = req.body;
     try{
