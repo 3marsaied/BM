@@ -89,6 +89,30 @@ router.put('/changePassword', authenticateToken, async (req, res) => {
 });
 
 
+router.get('/profileInfo', authenticateToken, async (req, res) => {
+    try {
+        // Ensure auth is properly obtained and verified
+        const userId = verifyAccessToken(req.token);
+        if (!userId) {
+            return res.status(401).json({ detail: "Unauthorized" });
+        }
+
+        // Find user by ID and exclude password from the result
+        const user = await User.findById(userId).select('-password'); // Excludes the password field
+
+        if (!user) {
+            return res.status(404).json({ detail: "User not found" });
+        }
+
+        // Send user data excluding the password
+        res.json(user);
+        
+    } catch (error) {
+        console.error('Internal Server Error:', error);
+        res.status(500).json({ detail: "Internal Server Error" });
+    }
+});
+
 
 
 
