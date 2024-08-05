@@ -99,7 +99,7 @@ router.get('/profileInfo', authenticateToken, async (req, res) => {
         }
 
         // Find user by ID and exclude password from the result
-        const user = await User.findById(userId).select('-password'); // Excludes the password field
+        const user = await User.findById(userId).select('-password', '-__v'); // Excludes the password field
 
         if (!user) {
             return res.status(404).json({ detail: "User not found" });
