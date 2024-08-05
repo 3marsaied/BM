@@ -63,7 +63,22 @@ router.post('/favourites', authenticateToken, async (req, res) => {
 });
 
 
-
+router.delete('/favourites', authenticateToken, async function (req, res) {
+    const {accNum} = req.body;
+    try{
+        const fav = await Favourite.findOne(accNum);
+        if (!fav) {
+            return res.status(404).json({ detail: "Favourite not found" });
+        }
+        await fav.remove();
+        res.status(202).send({ detail: "Favourite deleted successfully" });
+    } catch (error) {
+        console.error('Internal Server Error:', error);
+        if (!res.headersSent) { // Check if headers are already sent
+            return res.status(500).json({ detail: "Internal Server Error" });
+        }
+    }
+});
 
 
 
