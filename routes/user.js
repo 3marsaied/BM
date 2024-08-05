@@ -128,7 +128,7 @@ router.post('/transferMoney', authenticateToken, async (req, res) => {
             return res.status(403).json({ detail: "You are not authorized to transfer from this account" });
         }
         const convertedAmountToTransfer = await convertCurrency(currencyToSend, "USD", (amountToSend + fees))
-        if (convertedAmountToTransfer <= user.balance){
+        if (convertedAmountToTransfer >= user.balance){
             return res.status(400).json({ detail: "your balance is less than that amount"});
         }else{
             newSenderBalance = user.balance - convertedAmountToTransfer;
