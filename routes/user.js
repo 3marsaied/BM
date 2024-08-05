@@ -11,14 +11,13 @@ const Payment = require('../models/payment');
 
 
 router.post('/register', async (req, res) => {
-    const {firstName, lastName, email, dateOfBirth, password, phoneNumber, address, nationality, gender} = req.body;
+    const {firstName, lastName, email, dateOfBirth, password, phoneNumber, address, nationality, gender, nationalIdNumber} = req.body;
     try{
         const existingUser = await User.findOne({ email: email });
         
         if (existingUser) {
             return res.status(409).json({ detail: "User with the same email already exists" });
         }
-        var nationalIdNumber = getRandomIntInclusive(10000000000000, 99999999999999);
         var balance = getRandomIntInclusive(1000,99999999);
         var accountNumber = getRandomIntInclusive(10000000, 99999999);
         const hashedPassword = await hashPassword(password);
