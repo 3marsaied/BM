@@ -35,7 +35,6 @@ function verifyAccessToken(token, credentialsException = null) {
     try {
         const payload = jwt.verify(token, SECRET_KEY, { algorithms: [ALGORITHM] });
         const userId = payload.user_id;
-        console.log(userId);
         if (!userId) {
             if (credentialsException) {
                 throw credentialsException;

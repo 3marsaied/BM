@@ -5,8 +5,8 @@ const getRandomIntInclusive = require('../utils/RandomNumber');
 const router = express.Router();
 
 const User = require('../models/user');
-const Favourite = require('../models/Favourite');
-const Payment = require('../models/Payment');
+const Favourite = require('../models/favourite');
+const Payment = require('../models/payment');
 
 router.get('/favourites', authenticateToken, async (req, res) => {
     try {
