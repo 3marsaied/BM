@@ -15,7 +15,7 @@ router.get('/favourites', authenticateToken, async (req, res) => {
             return res.status(401).json({ detail: "Unauthorized" });
         }
 
-        const favourites = await Favourite.find({ userId: userId });
+        const favourites = await Favourite.find({ userId: userId })('-__v');
         return res.status(200).json(favourites);
     } catch (error) {
         console.error('Internal Server Error:', error);
