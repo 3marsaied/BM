@@ -51,7 +51,7 @@ router.post('/register', async (req, res) => {
 
 
 router.put('/changePassword', authenticateToken, async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
+    const { oldPassword, newPassword } = req.body;
 
     try {
         // Ensure auth is properly obtained and verified
@@ -67,7 +67,7 @@ router.put('/changePassword', authenticateToken, async (req, res) => {
         }
 
         // Verify the current password
-        const isMatch = await verifyPassword(currentPassword, existingUser.password);
+        const isMatch = await verifyPassword(oldPassword, existingUser.password);
         if (!isMatch) {
             return res.status(401).json({ detail: "Invalid current password" });
         }
