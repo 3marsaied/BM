@@ -143,6 +143,13 @@ router.post('/transferMoney', authenticateToken, async (req, res) => {
                 { _id: userId },
                 { $set: { balance: newSenderBalance } }
             );
+            const newPayment = new Payment({
+                recipientName: toName,
+                recipientAccNum: toAccNum,
+                totalSent: newRecivedBalance,
+                userId: userId
+            });
+            await newPayment.save();
             res.status(200).send({ message:"Money sent successfully" });
         }
     } catch (error) {
