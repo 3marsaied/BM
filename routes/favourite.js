@@ -66,9 +66,16 @@ router.post('/favourites', authenticateToken, async (req, res) => {
 router.delete('/favourites', authenticateToken, async function (req, res) {
     const {accNum} = req.body;
     try{
+        const userId = verifyAccessToken(req.token);
+        if (!userId) {
+            return res.status(401).json({ detail: "Unauthorized" });
+        }
         const fav = await Favourite.findOne(accNum);
         if (!fav) {
             return res.status(404).json({ detail: "Favourite not found" });
+        }
+        if(fav.userId !== userId){
+            return res.status(403).json({ detail: "Unauthorized to delete this favourite" });
         }
         await fav.remove();
         res.status(202).send({ detail: "Favourite deleted successfully" });
