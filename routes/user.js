@@ -180,8 +180,8 @@ router.put('/updateProfileInfo', authenticateToken, async (req, res) => {
             return res.status(401).json({ detail: "Unauthorized" });
         }
         const user = await User.findById(userId);
-        if(!user.accountNumber === fromAccNum){
-            return res.status(403).json({ detail: "You are not authorized to transfer from this account" });
+        if (!user) {
+            return res.status(404).json({ detail: "User not found" });
         }
         await User.update(
             {_id: userId},
