@@ -104,9 +104,14 @@ router.get('/profileInfo', authenticateToken, async (req, res) => {
         if (!user) {
             return res.status(404).json({ detail: "User not found" });
         }
+        const userInfo = {
+            ...user.toObject(),
+            accNum: user.accountNumber  // Add the new field
+        };
+        delete userInfo.accountNumber;  // Remove the original accountNumber field
 
-        // Send user data excluding the password
-        res.json(user);
+        // Send the modified user data
+        res.json(userInfo);
         
     } catch (error) {
         console.error('Internal Server Error:', error);
