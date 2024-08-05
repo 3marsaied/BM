@@ -142,7 +142,7 @@ router.post('/transferMoney', authenticateToken, async (req, res) => {
             newReciverBalance = recvedAccount.balance + convertedAmountToRecieve;
             await User.updateOne(
                 { accountNumber: toAccNum },
-                { $set: { balance: newRecivedBalance } }
+                { $set: { balance: newReciverBalance } }
             );
             await User.updateOne(
                 { _id: userId },
