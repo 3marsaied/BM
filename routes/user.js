@@ -172,29 +172,43 @@ router.post('/transferMoney', authenticateToken, async (req, res) => {
         res.status(500).json({ detail: "Internal Server Error" });
     }
 });
+
 router.put('/updateProfileInfo', authenticateToken, async (req, res) => {
-    const {firstName, lastName, phone, email} = req.body;
-    try{
+    const { firstName, lastName, phone, email } = req.body;
+
+    try {
+        // Verify user token
         const userId = verifyAccessToken(req.token);
         if (!userId) {
+            console.log('Unauthorized access attempt');
             return res.status(401).json({ detail: "Unauthorized" });
         }
+
+        // Find the user
         const user = await User.findById(userId);
         if (!user) {
+            console.log('User not found:', userId);
             return res.status(404).json({ detail: "User not found" });
         }
-        await User.update(
-            {_id: userId},
-            {$set: 
-                {
-                firstName: firstName === "" ? user.firstName : firstName, 
-                lastName: lastName === "" ? user.lastName : lastName, 
-                phoneNumber: phone === "" ? user.phoneNumber : phone, 
-                email: email === "" ? user.email : email
-            }}
-        )
-        const newUser = await User.findById(userId).select('-password');
-        res.status(200).json(newUser);
+
+        // Prepare update data
+        const updateData = {
+            firstName: firstName === "" ? user.firstName : firstName,
+            lastName: lastName === "" ? user.lastName : lastName,
+            phoneNumber: phone === "" ? user.phoneNumber : phone,
+            email: email === "" ? user.email : email
+        };
+
+        // Update user profile
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $set: updateData },
+            { new: true } // Return the updated document
+        ).select('-password');
+
+        console.log('User updated successfully:', updatedUser);
+        res.status(200).json(updatedUser);
+
     } catch (error) {
         console.error('Internal Server Error:', error);
         res.status(500).json({ detail: "Internal Server Error" });
