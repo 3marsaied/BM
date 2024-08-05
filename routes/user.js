@@ -151,5 +151,33 @@ router.post('/transferMoney', authenticateToken, async (req, res) => {
     }
 });
 
+router.put('/updateProfileInfo', authenticateToken, async (req, res) => {
+    const {firstName, lastName, phone, email} = req.body;
+    try{
+        const userId = verifyAccessToken(req.token);
+        if (!userId) {
+            return res.status(401).json({ detail: "Unauthorized" });
+        }
+        const user = await User.findById(userId);
+        if(!user.accountNumber === fromAccNum){
+            return res.status(403).json({ detail: "You are not authorized to transfer from this account" });
+        }
+        await User.update(
+            {_id: userId},
+            {$set: 
+                {
+                firstName: firstName === "" ? user.firstName : firstName, 
+                lastName: lastName === "" ? user.lastName : lastName, 
+                phoneNumber: phone === "" ? user.phoneNumber : phone, 
+                email: email === "" ? user.email : email
+            }}
+        )
+        const newUser = await User.findById(userId).select('-password');
+        res.status(200).json(newUser);
+    } catch (error) {
+        console.error('Internal Server Error:', error);
+        res.status(500).json({ detail: "Internal Server Error" });
+    }
+});
 
 module.exports = router;
