@@ -51,7 +51,7 @@ router.post('/favourites', authenticateToken, async (req, res) => {
         });
 
         await newFavourite.save();
-        return res.status(201).json(newFavourite);
+        return res.status(201).json(newFavourite.select('-__v'));
 
     } catch (error) {
         console.error('Internal Server Error:', error);
