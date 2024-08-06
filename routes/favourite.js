@@ -92,7 +92,8 @@ router.delete('/favourites/:accNum', authenticateToken, async function (req, res
         
         // Use deleteOne instead of remove
         await Favourite.deleteOne({ accNum: accNum });
-        res.status(202).send({ detail: "Favourite deleted successfully" });
+        const favourites = await Favourite.find({ userId: userId }).select('-__v');
+        return res.status(200).json(favourites);
     } catch (error) {
         console.error('Internal Server Error:', error);
         if (!res.headersSent) { // Check if headers are already sent
