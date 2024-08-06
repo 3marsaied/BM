@@ -63,8 +63,8 @@ router.post('/favourites', authenticateToken, async (req, res) => {
 });
 
 
-router.delete('/favourites', authenticateToken, async function (req, res) {
-    const { accNum } = req.body;
+router.delete('/favourites/:accNum', authenticateToken, async function (req, res) {
+    const { accNum } = req.params;
     try {
         const userId = verifyAccessToken(req.token);
         if (!userId) {
