@@ -2,8 +2,6 @@ BM – Backend Service
 
 BM is a backend application built with Node.js and Express, designed to provide API services with authentication support. The project follows a modular architecture with separated routes, models, and utility layers, making it suitable for scalable web applications. It is deployed on Vercel and structured for production use.
 
-🔗 Live Backend: https://bm-theta.vercel.app/
-
 🧠 What This Backend Does
 
 Provides a RESTful API using Express
